@@ -194,28 +194,54 @@
             dispatchTimer: 0
         };
 
-        // Iniciar el cronómetro
-        function startTimer(timerId) {
-            if (startTime[timerId] === null) {
-                startTime[timerId] = new Date().getTime() - elapsedTime[timerId];
-            }
+        var startTime = {};
+var elapsedTime = {};
+var timers = {};
 
-            timers[timerId] = setInterval(function() {
-                var currentTime = new Date().getTime();
-                var timeDifference = currentTime - startTime[timerId];
+// Iniciar el cronómetro
+function startTimer(timerId) {
+    if (startTime[timerId] === undefined) {
+        startTime[timerId] = new Date().getTime();
+        elapsedTime[timerId] = 0;
+    } else if (startTime[timerId] === null) {
+        startTime[timerId] = new Date().getTime() - elapsedTime[timerId];
+    }
 
-                var hours = Math.floor(timeDifference / (1000 * 60 * 60));
-                var minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-                var seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+    if (timers[timerId]) {
+        clearInterval(timers[timerId]);
+    }
 
-                hours = padZero(hours);
-                minutes = padZero(minutes);
-                seconds = padZero(seconds);
+    timers[timerId] = setInterval(function() {
+        var currentTime = new Date().getTime();
+        var timeDifference = currentTime - startTime[timerId];
 
-                document.getElementById(timerId).textContent = hours + ":" + minutes + ":" + seconds;
-            }, 1000);
-        }
+        var hours = Math.floor(timeDifference / (1000 * 60 * 60));
+        var minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
 
+        hours = padZero(hours);
+        minutes = padZero(minutes);
+        seconds = padZero(seconds);
+
+        document.getElementById(timerId).textContent = hours + ":" + minutes + ":" + seconds;
+    }, 1000);
+}
+
+// Detener el cronómetro
+function stopTimer(timerId) {
+    if (timers[timerId]) {
+        clearInterval(timers[timerId]);
+        delete startTime[timerId];
+        delete elapsedTime[timerId];
+    }
+}
+
+function padZero(number) {
+    if (number < 10) {
+        number = "0" + number;
+    }
+    return number;
+}
         // Detener el cronómetro
         function stopTimer(timerId) {
             if (timers[timerId]) {
