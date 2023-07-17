@@ -76,6 +76,7 @@
     <script src="https://unpkg.com/xlsx@0.16.9/dist/xlsx.full.min.js"></script>
     <script src="https://unpkg.com/file-saverjs@latest/FileSaver.min.js"></script>
     <script src="https://unpkg.com/tableexport@latest/dist/js/tableexport.min.js"></script>
+  
 </head>
 <body>
     
@@ -214,6 +215,7 @@ function startTimer(timerId) {
     timers[timerId] = setInterval(function() {
         var currentTime = new Date().getTime();
         var timeDifference = currentTime - startTime[timerId];
+        elapsedTime[timerId] = timeDifference;
 
         var hours = Math.floor(timeDifference / (1000 * 60 * 60));
         var minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
@@ -231,30 +233,22 @@ function startTimer(timerId) {
 function stopTimer(timerId) {
     if (timers[timerId]) {
         clearInterval(timers[timerId]);
-        delete startTime[timerId];
-        delete elapsedTime[timerId];
+        startTime[timerId] = null;
     }
 }
 
-function padZero(number) {
-    if (number < 10) {
-        number = "0" + number;
-    }
-    return number;
+// Reiniciar el cronómetro
+function resetTimer(timerId) {
+    clearInterval(timers[timerId]);
+    startTime[timerId] = null;
+    elapsedTime[timerId] = 0;
+    document.getElementById(timerId).textContent = "00:00:00";
 }
-        // Reiniciar el cronómetro
-        function resetTimer(timerId) {
-            clearInterval(timers[timerId]);
-            startTime[timerId] = null;
-            elapsedTime[timerId] = 0;
-            document.getElementById(timerId).textContent = "00:00:00";
-        }
 
-        // Agregar un cero inicial si el número es menor que 10
-        function padZero(num) {
-            return (num < 10 ? "0" : "") + num;
-        }
-
+// Agregar un cero inicial si el número es menor que 10
+function padZero(num) {
+    return (num < 10 ? "0" : "") + num;
+}
         // Guardar los datos en la tabla
         function saveToTable() {
             var op = document.getElementById("op").value;
@@ -348,5 +342,6 @@ function padZero(number) {
 
         let exportador = new ExportadorTabla("btnExportar", "data-table", "tiempos_produccion", "Tiempos de Produccion");
     </script>
+   
 </body>
 </html>
